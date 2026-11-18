@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(tieuDe)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${tieuDe} + ' – BlueMoon'">BlueMoon</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<nav th:fragment="nav" class="thanh">
+    <span class="ten">BlueMoon</span>
+    <a th:href="@{/}">Trang chủ</a>
+    <a th:if="${quyen.contains('XEM_CU_DAN')}" th:href="@{/can-ho}">Căn hộ</a>
+    <a th:if="${quyen.contains('XEM_CU_DAN')}" th:href="@{/ho}">Hộ, nhân khẩu</a>
+    <a th:if="${quyen.contains('QUAN_TRI_TAI_KHOAN')}" th:href="@{/tai-khoan}">Tài khoản</a>
+    <span class="phai">
+        <span th:text="${tenNguoiDung}">admin</span>
+        <form th:action="@{/dang-xuat}" method="post"><button type="submit">Đăng xuất</button></form>
+    </span>
+</nav>
+<div th:fragment="bao">
+    <div class="bao tot" th:if="${thongBao}" th:text="${thongBao}"></div>
+    <div class="bao xau" th:if="${loi}" th:text="${loi}"></div>
+</div>
+</body>
+</html>

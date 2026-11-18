@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Trang chủ')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+<main>
+    <h1>Phần mềm quản lý và thu phí chung cư BlueMoon</h1>
+    <div class="the-trang-chu">
+        <a th:if="${quyen.contains('XEM_CU_DAN')}" th:href="@{/can-ho}"><strong>Căn hộ</strong>Danh mục căn hộ và diện tích</a>
+        <a th:if="${quyen.contains('XEM_CU_DAN')}" th:href="@{/ho}"><strong>Hộ, nhân khẩu</strong>Hồ sơ hộ, nhân khẩu, chuyển đến, chuyển đi</a>
+        <a th:if="${quyen.contains('QUAN_TRI_TAI_KHOAN')}" th:href="@{/tai-khoan}"><strong>Tài khoản</strong>Cấp tài khoản, phân quyền, khóa tài khoản</a>
+    </div>
+    <p class="nho" th:if="${quyen.size() <= 1}">Tài khoản của bạn chưa được cấp chức năng nào trong phiên bản này.</p>
+</main>
+</body>
+</html>

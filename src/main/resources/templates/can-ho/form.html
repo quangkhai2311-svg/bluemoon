@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${canHo} ? 'Sửa căn hộ' : 'Thêm căn hộ')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+<main>
+    <h1 th:text="${canHo} ? 'Sửa căn hộ ' + ${canHo.maCanHo} : 'Thêm căn hộ'">Thêm căn hộ</h1>
+    <form class="the" th:object="${form}" method="post"
+          th:action="${canHo} ? @{/can-ho/{id}(id=${canHo.id})} : @{/can-ho}">
+        <div class="bao xau" th:if="${#fields.hasGlobalErrors()}" th:each="e : ${#fields.globalErrors()}" th:text="${e}"></div>
+        <div class="luoi">
+            <div>
+                <label for="maCanHo">Mã căn hộ *</label>
+                <input th:field="*{maCanHo}" th:readonly="${canHo != null}" th:errorclass="co-loi" placeholder="VD: A1203">
+                <div class="loi-truong" th:if="${#fields.hasErrors('maCanHo')}" th:errors="*{maCanHo}"></div>
+            </div>
+            <div>
+                <label for="tang">Tầng</label>
+                <input th:field="*{tang}" type="number" th:errorclass="co-loi">
+                <div class="loi-truong" th:if="${#fields.hasErrors('tang')}" th:errors="*{tang}"></div>
+            </div>
+            <div>
+                <label for="dienTich">Diện tích (m²) *</label>
+                <input th:field="*{dienTich}" inputmode="decimal" th:errorclass="co-loi" placeholder="VD: 75.5">
+                <div class="loi-truong" th:if="${#fields.hasErrors('dienTich')}" th:errors="*{dienTich}"></div>
+            </div>
+            <div>
+                <label for="ghiChu">Ghi chú</label>
+                <input th:field="*{ghiChu}">
+            </div>
+        </div>
+        <p class="nho" th:if="${canHo}">Diện tích mới chỉ áp dụng cho các kỳ thu lập sau; kỳ đã lập giữ nguyên số đã tính.</p>
+        <div class="hanh-dong">
+            <button type="submit">Lưu</button>
+            <a class="nut phu" th:href="@{/can-ho}">Hủy</a>
+        </div>
+    </form>
+</main>
+</body>
+</html>

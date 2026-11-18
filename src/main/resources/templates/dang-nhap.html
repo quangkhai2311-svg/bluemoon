@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Đăng nhập')}"></head>
+<body>
+<main class="dang-nhap">
+    <div class="the">
+        <h1>Đăng nhập BlueMoon</h1>
+        <div class="bao xau" th:if="${param.loi}">Tên đăng nhập hoặc mật khẩu không đúng.</div>
+        <div class="bao tot" th:if="${param['da-dang-xuat']}">Đã đăng xuất.</div>
+        <form th:action="@{/dang-nhap}" method="post">
+            <p><label for="tenDangNhap">Tên đăng nhập</label>
+                <input id="tenDangNhap" name="tenDangNhap" autocomplete="username" required autofocus></p>
+            <p><label for="matKhau">Mật khẩu</label>
+                <input id="matKhau" name="matKhau" type="password" autocomplete="current-password" required></p>
+            <button type="submit">Đăng nhập</button>
+        </form>
+    </div>
+</main>
+</body>
+</html>

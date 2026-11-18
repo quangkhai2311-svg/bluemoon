@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Hộ ' + ${ho.maHo})}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+<main th:with="duocSua=${quyen.contains('SUA_CU_DAN')}">
+    <h1 th:text="'Hộ ' + ${ho.maHo}">Hộ</h1>
+    <div th:replace="~{fragments/layout :: bao}"></div>
+    <div class="the">
+        <div class="luoi">
+            <div><span class="nho">Căn hộ</span><br><strong th:text="${ho.canHo.maCanHo} + ' – ' + ${ho.canHo.dienTich} + ' m²'"></strong></div>
+            <div><span class="nho">Người đại diện</span><br><strong th:text="${ho.nguoiDaiDien}"></strong></div>
+            <div><span class="nho">Điện thoại</span><br><strong th:text="${ho.soDienThoai} ?: '–'"></strong></div>
+            <div><span class="nho">Số người đang ở</span><br><strong th:text="${dangO.size()}"></strong></div>
+        </div>
+    </div>
+
+    <h2>Nhân khẩu đang ở</h2>
+    <table>
+        <thead><tr><th>Mã</th><th>Họ tên</th><th>Ngày sinh</th><th>Giới tính</th><th>Quan hệ với chủ hộ</th><th th:if="${duocSua}">Chuyển đi</th></tr></thead>
+        <tbody>
+        <tr th:each="nk : ${dangO}">
+            <td th:text="${nk.maNhanKhau}"></td>
+            <td th:text="${nk.hoTen}"></td>
+            <td th:text="${#temporals.format(nk.ngaySinh, 'dd/MM/yyyy')}"></td>
+            <td th:text="${nk.gioiTinh?.ten}"></td>
+            <td th:text="${nk.quanHeChuHo}"></td>
+            <td th:if="${duocSua}">
+                <form class="dong-form" method="post" th:action="@{/ho/{h}/nhan-khau/{n}/chuyen-di(h=${ho.id},n=${nk.id})}">
+                    <input type="date" name="ngayChuyenDi" required title="Ngày chuyển đi">
+                    <input name="noiChuyenDen" placeholder="Chuyển tới đâu">
+                    <button type="submit" class="nguy">Ghi chuyển đi</button>
+                </form>
+            </td>
+        </tr>
+        <tr th:if="${dangO.isEmpty()}"><td colspan="6" class="nho">Chưa có nhân khẩu nào đang ở.</td></tr>
+        </tbody>
+    </table>
+
+    <th:block th:if="${duocSua}">
+        <h2>Cập nhật nhân khẩu</h2>
+        <details class="the" th:open="${formDangMo == 'them'}">
+            <summary>Thêm nhân khẩu</summary>
+            <form th:object="${themForm}" th:action="@{/ho/{id}/nhan-khau(id=${ho.id})}" method="post">
+                <div th:replace="~{fragments/nhan-khau :: o-nhap('them')}"></div>
+                <div class="hanh-dong"><button type="submit">Thêm vào hộ</button></div>
+            </form>
+        </details>
+        <details class="the" th:open="${formDangMo == 'den'}">
+            <summary>Ghi chuyển đến</summary>
+            <p class="nho">Nhập mã nhân khẩu cũ nếu người này đã từng chuyển đi khỏi một hộ trong chung cư.</p>
+            <form th:object="${denForm}" th:action="@{/ho/{id}/chuyen-den(id=${ho.id})}" method="post">
+                <div th:replace="~{fragments/nhan-khau :: o-nhap('den')}"></div>
+                <div class="luoi" style="margin-top:12px">
+                    <div>
+                        <label for="ngayChuyenDen">Ngày chuyển đến *</label>
+                        <input th:field="*{ngayChuyenDen}" type="date" th:errorclass="co-loi">
+                        <div class="loi-truong" th:if="${#fields.hasErrors('ngayChuyenDen')}" th:errors="*{ngayChuyenDen}"></div>
+                    </div>
+                    <div>
+                        <label for="noiChuyenTu">Chuyển từ đâu</label>
+                        <input th:field="*{noiChuyenTu}">
+                    </div>
+                </div>
+                <div class="hanh-dong"><button type="submit">Ghi chuyển đến</button></div>
+            </form>
+        </details>
+    </th:block>
+
+    <h2>Lịch sử biến động</h2>
+    <table>
+        <thead><tr><th>Ngày hiệu lực</th><th>Loại biến động</th><th>Nhân khẩu</th><th>Nơi đi / đến</th><th>Người ghi</th><th>Thời điểm ghi</th></tr></thead>
+        <tbody>
+        <tr th:each="b : ${lichSu}">
+            <td th:text="${#temporals.format(b.ngayHieuLuc, 'dd/MM/yyyy')}"></td>
+            <td th:text="${b.loai.ten}"></td>
+            <td th:text="${b.nhanKhau.maNhanKhau} + ' – ' + ${b.nhanKhau.hoTen}"></td>
+            <td th:text="${b.diaDiem}"></td>
+            <td th:text="${b.nguoiGhi}"></td>
+            <td th:text="${#temporals.format(b.thoiDiemGhi, 'dd/MM/yyyy HH:mm')}"></td>
+        </tr>
+        <tr th:if="${lichSu.isEmpty()}"><td colspan="6" class="nho">Chưa có biến động.</td></tr>
+        </tbody>
+    </table>
+    <p><a th:href="@{/ho}">← Danh sách hộ</a></p>
+</main>
+</body>
+</html>

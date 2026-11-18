@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Không có quyền')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+<main>
+    <div class="bao xau">Tài khoản của bạn không có quyền dùng chức năng này. Liên hệ quản trị viên nếu cần cấp quyền.</div>
+    <a th:href="@{/}">Về trang chủ</a>
+</main>
+</body>
+</html>

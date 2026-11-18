@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Thêm hộ')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+<main>
+    <h1>Thêm hộ</h1>
+    <form class="the" th:object="${form}" th:action="@{/ho}" method="post">
+        <div class="bao xau" th:if="${#fields.hasGlobalErrors()}" th:each="e : ${#fields.globalErrors()}" th:text="${e}"></div>
+        <div class="luoi">
+            <div>
+                <label for="maHo">Mã hộ *</label>
+                <input th:field="*{maHo}" th:errorclass="co-loi" placeholder="VD: H001">
+                <div class="loi-truong" th:if="${#fields.hasErrors('maHo')}" th:errors="*{maHo}"></div>
+            </div>
+            <div>
+                <label for="canHoId">Căn hộ *</label>
+                <select th:field="*{canHoId}" th:errorclass="co-loi">
+                    <option value="">– Chọn căn hộ –</option>
+                    <option th:each="c : ${dsCanHo}" th:value="${c.id}" th:text="${c.maCanHo} + ' (' + ${c.dienTich} + ' m²)'"></option>
+                </select>
+                <div class="loi-truong" th:if="${#fields.hasErrors('canHoId')}" th:errors="*{canHoId}"></div>
+            </div>
+            <div>
+                <label for="nguoiDaiDien">Người đại diện *</label>
+                <input th:field="*{nguoiDaiDien}" th:errorclass="co-loi">
+                <div class="loi-truong" th:if="${#fields.hasErrors('nguoiDaiDien')}" th:errors="*{nguoiDaiDien}"></div>
+            </div>
+            <div>
+                <label for="soDienThoai">Điện thoại</label>
+                <input th:field="*{soDienThoai}">
+            </div>
+        </div>
+        <div class="hanh-dong">
+            <button type="submit">Lưu</button>
+            <a class="nut phu" th:href="@{/ho}">Hủy</a>
+        </div>
+    </form>
+</main>
+</body>
+</html>

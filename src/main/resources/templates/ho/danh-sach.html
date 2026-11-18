@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Hộ')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+<main>
+    <h1>Danh sách hộ</h1>
+    <div th:replace="~{fragments/layout :: bao}"></div>
+    <p th:if="${quyen.contains('SUA_CU_DAN')}"><a class="nut" th:href="@{/ho/them}">+ Thêm hộ</a></p>
+    <table>
+        <thead><tr><th>Mã hộ</th><th>Căn hộ</th><th>Người đại diện</th><th>Điện thoại</th><th>Ngày lập</th></tr></thead>
+        <tbody>
+        <tr th:each="h : ${dsHo}">
+            <td><a th:href="@{/ho/{id}(id=${h.id})}" th:text="${h.maHo}"></a></td>
+            <td th:text="${h.canHo.maCanHo}"></td>
+            <td th:text="${h.nguoiDaiDien}"></td>
+            <td th:text="${h.soDienThoai}"></td>
+            <td th:text="${#temporals.format(h.ngayLap, 'dd/MM/yyyy')}"></td>
+        </tr>
+        <tr th:if="${dsHo.isEmpty()}"><td colspan="5" class="nho">Chưa có hộ nào.</td></tr>
+        </tbody>
+    </table>
+</main>
+</body>
+</html>

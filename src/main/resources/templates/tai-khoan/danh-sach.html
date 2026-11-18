@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Tài khoản')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+<main>
+    <h1>Tài khoản và phân quyền</h1>
+    <div th:replace="~{fragments/layout :: bao}"></div>
+    <table>
+        <thead><tr><th>Tên đăng nhập</th><th>Họ tên</th><th>Vai trò</th><th>Trạng thái</th><th></th></tr></thead>
+        <tbody>
+        <tr th:each="tk : ${dsTaiKhoan}">
+            <td th:text="${tk.tenDangNhap}"></td>
+            <td th:text="${tk.hoTen}"></td>
+            <td>
+                <form class="dong-form" method="post" th:action="@{/tai-khoan/{id}/vai-tro(id=${tk.id})}">
+                    <select name="vaiTro">
+                        <option th:each="v : ${vaiTro}" th:value="${v}" th:text="${v.ten}" th:selected="${v == tk.vaiTro}"></option>
+                    </select>
+                    <button type="submit" class="phu">Đổi</button>
+                </form>
+            </td>
+            <td th:text="${tk.hoatDong} ? 'Đang hoạt động' : 'Đã khóa'"></td>
+            <td>
+                <form th:if="${tk.hoatDong}" method="post" th:action="@{/tai-khoan/{id}/khoa(id=${tk.id})}">
+                    <button type="submit" class="nguy">Khóa</button>
+                </form>
+                <form th:unless="${tk.hoatDong}" method="post" th:action="@{/tai-khoan/{id}/mo-khoa(id=${tk.id})}">
+                    <button type="submit" class="phu">Mở khóa</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h2>Đăng ký tài khoản mới</h2>
+    <form class="the" th:object="${form}" th:action="@{/tai-khoan}" method="post">
+        <div class="luoi">
+            <div>
+                <label for="tenDangNhap">Tên đăng nhập *</label>
+                <input th:field="*{tenDangNhap}" th:errorclass="co-loi" autocomplete="off">
+                <div class="loi-truong" th:if="${#fields.hasErrors('tenDangNhap')}" th:errors="*{tenDangNhap}"></div>
+            </div>
+            <div>
+                <label for="hoTen">Họ tên *</label>
+                <input th:field="*{hoTen}" th:errorclass="co-loi">
+                <div class="loi-truong" th:if="${#fields.hasErrors('hoTen')}" th:errors="*{hoTen}"></div>
+            </div>
+            <div>
+                <label for="matKhau">Mật khẩu (ít nhất 8 ký tự) *</label>
+                <input th:field="*{matKhau}" type="password" th:errorclass="co-loi" autocomplete="new-password">
+                <div class="loi-truong" th:if="${#fields.hasErrors('matKhau')}" th:errors="*{matKhau}"></div>
+            </div>
+            <div>
+                <label for="vaiTro">Vai trò *</label>
+                <select th:field="*{vaiTro}" th:errorclass="co-loi">
+                    <option value="">– Chọn vai trò –</option>
+                    <option th:each="v : ${vaiTro}" th:value="${v}" th:text="${v.ten}"></option>
+                </select>
+                <div class="loi-truong" th:if="${#fields.hasErrors('vaiTro')}" th:errors="*{vaiTro}"></div>
+            </div>
+        </div>
+        <p class="nho">Quản trị viên: toàn quyền · Cán bộ cư dân: xem và sửa căn hộ, hộ, nhân khẩu · Chỉ xem: xem dữ liệu cư dân, không sửa · Thủ quỹ: chức năng thu phí (Sprint 2).</p>
+        <div class="hanh-dong"><button type="submit">Tạo tài khoản</button></div>
+    </form>
+</main>
+</body>
+</html>

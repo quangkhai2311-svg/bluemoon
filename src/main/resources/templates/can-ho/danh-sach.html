@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Căn hộ')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+<main>
+    <h1>Danh mục căn hộ</h1>
+    <div th:replace="~{fragments/layout :: bao}"></div>
+    <p th:if="${quyen.contains('SUA_CU_DAN')}"><a class="nut" th:href="@{/can-ho/them}">+ Thêm căn hộ</a></p>
+    <table>
+        <thead><tr><th>Mã căn hộ</th><th>Tầng</th><th>Diện tích (m²)</th><th>Ghi chú</th><th th:if="${quyen.contains('SUA_CU_DAN')}"></th></tr></thead>
+        <tbody>
+        <tr th:each="c : ${dsCanHo}">
+            <td th:text="${c.maCanHo}"></td>
+            <td th:text="${c.tang}"></td>
+            <td class="so" th:text="${#numbers.formatDecimal(c.dienTich, 1, 'COMMA', 2, 'POINT')}"></td>
+            <td th:text="${c.ghiChu}"></td>
+            <td th:if="${quyen.contains('SUA_CU_DAN')}"><a th:href="@{/can-ho/{id}/sua(id=${c.id})}">Sửa</a></td>
+        </tr>
+        <tr th:if="${dsCanHo.isEmpty()}"><td colspan="5" class="nho">Chưa có căn hộ nào.</td></tr>
+        </tbody>
+    </table>
+</main>
+</body>
+</html>

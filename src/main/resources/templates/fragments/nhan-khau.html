@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+<!-- Các ô thông tin nhân khẩu, dùng chung cho form thêm nhân khẩu và form chuyển đến -->
+<div th:fragment="o-nhap(tienTo)" class="luoi">
+    <div>
+        <label th:for="${tienTo + '-maNhanKhau'}">Mã nhân khẩu *</label>
+        <input th:field="*{maNhanKhau}" th:id="${tienTo + '-maNhanKhau'}" th:errorclass="co-loi">
+        <div class="loi-truong" th:if="${#fields.hasErrors('maNhanKhau')}" th:errors="*{maNhanKhau}"></div>
+    </div>
+    <div>
+        <label th:for="${tienTo + '-hoTen'}">Họ tên *</label>
+        <input th:field="*{hoTen}" th:id="${tienTo + '-hoTen'}" th:errorclass="co-loi">
+        <div class="loi-truong" th:if="${#fields.hasErrors('hoTen')}" th:errors="*{hoTen}"></div>
+    </div>
+    <div>
+        <label th:for="${tienTo + '-ngaySinh'}">Ngày sinh *</label>
+        <input th:field="*{ngaySinh}" th:id="${tienTo + '-ngaySinh'}" type="date" th:errorclass="co-loi">
+        <div class="loi-truong" th:if="${#fields.hasErrors('ngaySinh')}" th:errors="*{ngaySinh}"></div>
+    </div>
+    <div>
+        <label th:for="${tienTo + '-gioiTinh'}">Giới tính</label>
+        <select th:field="*{gioiTinh}" th:id="${tienTo + '-gioiTinh'}">
+            <option value="">–</option>
+            <option th:each="g : ${gioiTinh}" th:value="${g}" th:text="${g.ten}"></option>
+        </select>
+    </div>
+    <div>
+        <label th:for="${tienTo + '-soCccd'}">Số CCCD</label>
+        <input th:field="*{soCccd}" th:id="${tienTo + '-soCccd'}">
+    </div>
+    <div>
+        <label th:for="${tienTo + '-quanHeChuHo'}">Quan hệ với chủ hộ</label>
+        <input th:field="*{quanHeChuHo}" th:id="${tienTo + '-quanHeChuHo'}" placeholder="VD: Chủ hộ, Vợ, Con">
+    </div>
+</div>
+</body>
+</html>

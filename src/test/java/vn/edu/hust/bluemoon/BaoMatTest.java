@@ -118,6 +118,14 @@ class BaoMatTest {
         }
 
         @Test
+        void trangKhongCoQuyenNhanCaGetVaPost() throws Exception {
+            // yêu cầu POST bị từ chối được forward tới trang này bằng POST; trước đây trả 405 thay vì trang báo lỗi
+            mvc.perform(post("/khong-co-quyen").with(user("xem1").authorities(() -> "XEM_CU_DAN")).with(csrf()))
+                    .andExpect(status().isForbidden())
+                    .andExpect(content().string(org.hamcrest.Matchers.containsString("không có quyền")));
+        }
+
+        @Test
         void AC3_khongCoQuyenXemCuDanThiBiTuChoi() throws Exception {
             RequestPostProcessor thuQuy = user("thuquy1").authorities(() -> "ROLE_THU_QUY");
             mvc.perform(get("/ho").with(thuQuy)).andExpect(status().isForbidden());

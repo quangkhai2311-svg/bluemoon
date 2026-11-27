@@ -8,7 +8,7 @@ Phiên bản hiện tại: **Sprint 1 (16/11 – 27/11/2026)**: đăng nhập, t
 
 - Java 21, Spring Boot 4 (Web MVC, Security, Data JPA), Thymeleaf
 - CSDL: H2 lưu ra file khi chạy thử, MySQL khi triển khai
-- Kiểm thử: JUnit 5, Spring Security Test (MockMvc)
+- Kiểm thử: JUnit 5, Spring Security Test (MockMvc); GitHub Actions chạy `mvn test` mỗi lần push và mỗi Pull Request
 
 ## Chạy thử
 
@@ -20,6 +20,18 @@ mvn spring-boot:run
 
 Mở http://localhost:8080. Lần chạy đầu, hệ thống tự tạo tài khoản quản trị `admin`, mật khẩu `admin12345`.
 Đặt biến môi trường `BLUEMOON_ADMIN_PASSWORD` trước lần chạy đầu để dùng mật khẩu khác. Dữ liệu chạy thử nằm trong thư mục `data/`; xóa thư mục này để làm lại từ đầu.
+
+### Chạy bản demo (có dữ liệu giả lập)
+
+```bash
+mvn spring-boot:run -Dspring-boot.run.profiles=demo
+```
+
+Nạp 12 căn hộ, 6 hộ, 14 nhân khẩu và các tài khoản `canbo` (cán bộ cư dân), `xem` (chỉ xem), `thuquy` (thủ quỹ), mật khẩu `matkhau123`. CSDL demo lưu riêng ở `data/demo`.
+
+### Cài trên máy Windows của BQT
+
+Xem [HUONG_DAN_CAI_DAT.md](HUONG_DAN_CAI_DAT.md). Gói cài đặt (jar và các file `.bat`) được tạo bằng `phat-hanh/dong-goi.sh` và đính kèm ở mục Releases của kho.
 
 ### Chạy với MySQL
 
@@ -55,7 +67,7 @@ mvn test
 | US-016 | Đăng nhập | `BaoMatTest.US016_DangNhap` |
 | US-017 | Đăng ký tài khoản, phân quyền, khóa tài khoản | `BaoMatTest.US017_TaiKhoanPhanQuyen` |
 
-Mỗi test được đặt tên theo tiêu chí chấp nhận, ví dụ `AC2_tuChoiMaTrung`.
+Mỗi test được đặt tên theo tiêu chí chấp nhận, ví dụ `AC2_tuChoiMaTrung`. Ngoài AC còn có test bổ sung: ngày biến động không được trước biến động gần nhất, trang báo không có quyền, dữ liệu demo nạp được.
 Riêng US-001 AC3 ("kỳ đã lập không đổi") được kiểm thử đầy đủ ở Sprint 2, khi có kỳ thu (US-009).
 
 ## Cấu trúc mã nguồn

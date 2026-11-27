@@ -18,6 +18,9 @@ import vn.edu.hust.bluemoon.cudan.*;
 @Transactional
 class CuDanTest {
 
+    /** Thêm nhân khẩu ghi ngày hôm nay, nên các biến động sau đó trong test cũng dùng ngày hôm nay. */
+    static final String HOM_NAY = LocalDate.now().toString();
+
     @Autowired CanHoService canHoService;
     @Autowired HoService hoService;
     @Autowired NhanKhauService nhanKhauService;
@@ -182,7 +185,7 @@ class CuDanTest {
         void AC1_chuyenDiThiKhongConTrongDanhSachNhungGiuLichSu() {
             Ho h = taoHo("A1203", "H001");
             NhanKhau nk = nhanKhauService.them(h.getId(), nhanKhau("NK001", "Nguyễn Văn An", "1980-05-20"), "canbo");
-            nhanKhauService.chuyenDi(h.getId(), nk.getId(), chuyenDi("2026-11-20"), "canbo");
+            nhanKhauService.chuyenDi(h.getId(), nk.getId(), chuyenDi(HOM_NAY), "canbo");
             assertThat(nhanKhauService.dangO(h.getId())).isEmpty();
             assertThat(nhanKhauService.lichSu(h.getId())).extracting(BienDong::getLoai)
                     .containsExactly(LoaiBienDong.CHUYEN_DI, LoaiBienDong.THEM_MOI);
@@ -192,7 +195,7 @@ class CuDanTest {
         void AC2_chuyenDenThiCoTrongDanhSachHo() {
             Ho h = taoHo("A1203", "H001");
             NhanKhauForm f = nhanKhau("NK002", "Trần Thị Bình", "1985-03-15");
-            f.setNgayChuyenDen("2026-11-18");
+            f.setNgayChuyenDen(HOM_NAY);
             f.setNoiChuyenTu("Hải Phòng");
             nhanKhauService.chuyenDen(h.getId(), f, "canbo");
             assertThat(nhanKhauService.dangO(h.getId())).extracting(NhanKhau::getMaNhanKhau).containsExactly("NK002");
@@ -204,10 +207,10 @@ class CuDanTest {
             Ho h2 = taoHo("A1204", "H002");
             NhanKhau nk = nhanKhauService.them(h1.getId(), nhanKhau("NK001", "Nguyễn Văn An", "1980-05-20"), "canbo");
             NhanKhauForm f = nhanKhau("NK001", "Nguyễn Văn An", "1980-05-20");
-            f.setNgayChuyenDen("2026-11-20");
+            f.setNgayChuyenDen(HOM_NAY);
             assertThatThrownBy(() -> nhanKhauService.chuyenDen(h2.getId(), f, "canbo"))
                     .isInstanceOf(NghiepVuException.class).hasMessageContaining("đang ở hộ H001");
-            nhanKhauService.chuyenDi(h1.getId(), nk.getId(), chuyenDi("2026-11-20"), "canbo");
+            nhanKhauService.chuyenDi(h1.getId(), nk.getId(), chuyenDi(HOM_NAY), "canbo");
             nhanKhauService.chuyenDen(h2.getId(), f, "canbo");
             assertThat(nhanKhauService.dangO(h2.getId())).extracting(NhanKhau::getMaNhanKhau).containsExactly("NK001");
             assertThat(nhanKhauService.lichSu(h1.getId())).hasSize(2);
@@ -217,11 +220,21 @@ class CuDanTest {
         void AC3_lichSuCoLoaiNgayHieuLucNguoiGhi() {
             Ho h = taoHo("A1203", "H001");
             NhanKhau nk = nhanKhauService.them(h.getId(), nhanKhau("NK001", "Nguyễn Văn An", "1980-05-20"), "canbo1");
-            nhanKhauService.chuyenDi(h.getId(), nk.getId(), chuyenDi("2026-11-25"), "canbo2");
+            nhanKhauService.chuyenDi(h.getId(), nk.getId(), chuyenDi(HOM_NAY), "canbo2");
             BienDong moiNhat = nhanKhauService.lichSu(h.getId()).getFirst();
             assertThat(moiNhat.getLoai()).isEqualTo(LoaiBienDong.CHUYEN_DI);
-            assertThat(moiNhat.getNgayHieuLuc()).isEqualTo(LocalDate.of(2026, 11, 25));
+            assertThat(moiNhat.getNgayHieuLuc()).isEqualTo(LocalDate.parse(HOM_NAY));
             assertThat(moiNhat.getNguoiGhi()).isEqualTo("canbo2");
+        }
+
+        @Test
+        void tuChoiNgayChuyenDiTruocNgayVaoHo() {
+            Ho h = taoHo("A1203", "H001");
+            NhanKhau nk = nhanKhauService.them(h.getId(), nhanKhau("NK001", "Nguyễn Văn An", "1980-05-20"), "canbo");
+            String homQua = LocalDate.parse(HOM_NAY).minusDays(1).toString();
+            assertThatThrownBy(() -> nhanKhauService.chuyenDi(h.getId(), nk.getId(), chuyenDi(homQua), "canbo"))
+                    .isInstanceOf(NghiepVuException.class).hasMessageContaining("trở đi");
+            assertThat(nhanKhauService.dangO(h.getId())).hasSize(1);
         }
 
         @Test

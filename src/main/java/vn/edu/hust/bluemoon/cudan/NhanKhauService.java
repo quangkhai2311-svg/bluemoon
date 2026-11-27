@@ -64,6 +64,7 @@ public class NhanKhauService {
                 : nhanKhauRepo.findByMaNhanKhauIgnoreCase(f.getMaNhanKhau().trim()).orElse(null);
         kt.neu(daCo != null && daCo.getTrangThai() == TrangThaiCuTru.DANG_O, "maNhanKhau",
                 daCo == null ? "" : "Người này đang ở hộ " + daCo.getHo().getMaHo() + ", cần ghi chuyển đi trước");
+        if (daCo != null && ngayDen != null) kiemTraThuTuNgay(kt, "ngayChuyenDen", daCo, ngayDen);
         kt.nemNeuCoLoi();
 
         NhanKhau nk;
@@ -86,6 +87,7 @@ public class NhanKhauService {
         }
         KiemTra kt = new KiemTra();
         LocalDate ngayDi = kiemTraNgayHieuLuc(kt, "ngayChuyenDi", f.getNgayChuyenDi());
+        if (ngayDi != null) kiemTraThuTuNgay(kt, "ngayChuyenDi", nk, ngayDi);
         kt.nemNeuCoLoi();
         nk.chuyenDi();
         ghi(nk, nk.getHo(), LoaiBienDong.CHUYEN_DI, ngayDi, KiemTra.chuanHoa(f.getNoiChuyenDen()), nguoiGhi);
@@ -102,6 +104,13 @@ public class NhanKhauService {
               .neu(ngaySinh != null && ngaySinh.isAfter(LocalDate.now(clock)), "ngaySinh", "Ngày sinh không được ở tương lai");
         }
         return ngaySinh;
+    }
+
+    /** Lịch sử phải đúng trình tự: biến động mới không được có ngày hiệu lực trước biến động gần nhất của người đó. */
+    private void kiemTraThuTuNgay(KiemTra kt, String truong, NhanKhau nk, LocalDate ngay) {
+        bienDongRepo.findFirstByNhanKhauIdOrderByNgayHieuLucDescIdDesc(nk.getId()).ifPresent(gan -> kt.neu(
+                ngay.isBefore(gan.getNgayHieuLuc()), truong,
+                "Ngày phải từ " + gan.getNgayHieuLuc().format(NgayThang.HIEN_THI) + " trở đi (ngày " + gan.getLoai().getTen().toLowerCase() + " gần nhất)"));
     }
 
     private static LocalDate kiemTraNgayHieuLuc(KiemTra kt, String truong, String giaTri) {

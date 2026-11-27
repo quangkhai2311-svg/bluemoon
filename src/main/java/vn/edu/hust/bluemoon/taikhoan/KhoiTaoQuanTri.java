@@ -6,10 +6,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 /** Lần chạy đầu (chưa có tài khoản nào) tạo một tài khoản quản trị để đăng nhập và cấp tài khoản cho người khác. */
 @Component
+@Order(1)
 public class KhoiTaoQuanTri implements ApplicationRunner {
 
     private static final Logger log = LoggerFactory.getLogger(KhoiTaoQuanTri.class);
